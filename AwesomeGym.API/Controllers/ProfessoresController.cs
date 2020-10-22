@@ -1,5 +1,4 @@
-﻿using AwesomeGym.API.Entidades;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,16 +7,16 @@ using System.Threading.Tasks;
 namespace AwesomeGym.API.Controllers
 {
     [ApiController]
-    [Route("api/alunos")]
-    public class AlunosController : ControllerBase
+    [Route("api/professores")]
+    public class ProfessoresController : ControllerBase
     {
         [HttpGet]
         public IActionResult Get()
         {
             return Ok();
         }
-
-        [HttpGet("{id}")] //Obtendo apenas um aluno
+        
+        [HttpGet("{id}")] //Obtendo apenas um professor
         public IActionResult Get(int id)
         {
             return Ok();
@@ -29,8 +28,8 @@ namespace AwesomeGym.API.Controllers
             return Ok();
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Put(int id) //Inserindo ou atualizando um aluno
+        [HttpPut("{id}")] //Inserindo ou atualizando um professor
+        public IActionResult Put(int id)
         {
             return Ok();
         }

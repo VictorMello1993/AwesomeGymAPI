@@ -8,16 +8,20 @@ using System.Threading.Tasks;
 namespace AwesomeGym.API.Controllers
 {
     [ApiController]
-    [Route("api/alunos")]
-    public class AlunosController : ControllerBase
+    [Route("api/unidades")]
+    public class UnidadesController : ControllerBase
     {
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok();
+            return Ok(new List<Aluno> {
+                new Aluno("Victor", "Rua Zero", DateTime.Now),
+                new Aluno("Victor 2", "Rua Zero", DateTime.Now),
+                new Aluno("Victor 3", "Rua Zero", DateTime.Now)
+            });
         }
 
-        [HttpGet("{id}")] //Obtendo apenas um aluno
+        [HttpGet("{id}")] //Obtendo apenas uma unidade
         public IActionResult Get(int id)
         {
             return Ok();
@@ -28,13 +32,13 @@ namespace AwesomeGym.API.Controllers
         {
             return Ok();
         }
-
-        [HttpPut("{id}")]
-        public IActionResult Put(int id) //Inserindo ou atualizando um aluno
+        
+        [HttpPut("{id}")] //Inserindo ou atualizando uma unidade
+        public IActionResult Put(int id)
         {
             return Ok();
         }
-
+        
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
