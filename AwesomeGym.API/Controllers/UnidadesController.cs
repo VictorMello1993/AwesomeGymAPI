@@ -1,4 +1,5 @@
 ﻿using AwesomeGym.API.Entidades;
+using AwesomeGym.API.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,29 +12,42 @@ namespace AwesomeGym.API.Controllers
     [Route("api/unidades")]
     public class UnidadesController : ControllerBase
     {
+        private readonly AwesomeGymDbContext _awesomeGymDbContext;
+
+        public UnidadesController(AwesomeGymDbContext awesomeDbContext)
+        {
+            _awesomeGymDbContext = awesomeDbContext;
+        }
+
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(new List<Aluno> {
-                new Aluno("Victor", "Rua Zero", DateTime.Now),
-                new Aluno("Victor 2", "Rua Zero", DateTime.Now),
-                new Aluno("Victor 3", "Rua Zero", DateTime.Now)
-            });
+            var unidades = _awesomeGymDbContext.Unidades.ToList();
+            return Ok(unidades);
         }
 
-        [HttpGet("{id}")] //Obtendo apenas uma unidade
+        [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            return Ok();
+            var unidade = _awesomeGymDbContext.Unidades.FirstOrDefault(u => u.Id == id);
+
+            if(unidade == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(unidade);
         }
 
         [HttpPost]
-        public IActionResult Post()
+        public IActionResult Post([FromBody]Unidade unidade)
         {
+            _awesomeGymDbContext.Unidades.Add(unidade);
+            _awesomeGymDbContext.SaveChanges();
             return Ok();
         }
         
-        [HttpPut("{id}")] //Inserindo ou atualizando uma unidade
+        [HttpPut("{id}")]
         public IActionResult Put(int id)
         {
             return Ok();

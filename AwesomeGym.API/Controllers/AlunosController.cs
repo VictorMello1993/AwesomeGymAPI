@@ -1,4 +1,5 @@
 ﻿using AwesomeGym.API.Entidades;
+using AwesomeGym.API.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,26 +12,50 @@ namespace AwesomeGym.API.Controllers
     [Route("api/alunos")]
     public class AlunosController : ControllerBase
     {
+        private readonly AwesomeGymDbContext _awesomeGymDbContext;
+
+        public AlunosController(AwesomeGymDbContext awesomeDbContext)
+        {
+            _awesomeGymDbContext = awesomeDbContext;
+        }
+
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok();
+            var alunos = _awesomeGymDbContext.Alunos.ToList();
+
+            return Ok(alunos);
         }
 
-        [HttpGet("{id}")] //Obtendo apenas um aluno
+        [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            return Ok();
+            var aluno = _awesomeGymDbContext.Alunos.FirstOrDefault(u => u.Id == id);
+
+            if(aluno == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(aluno);
         }
 
         [HttpPost]
-        public IActionResult Post()
+        public IActionResult Post([FromBody]Aluno aluno)
         {
+            //Chumbando professor para fins de testes
+            var professor = new Professor("professor1", "endereco 1", aluno.IdUnidade);
+            _awesomeGymDbContext.Professores.Add(professor);
+            _awesomeGymDbContext.SaveChanges();
+
+            _awesomeGymDbContext.Alunos.Add(aluno);
+            _awesomeGymDbContext.SaveChanges();
+
             return Ok();
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id) //Inserindo ou atualizando um aluno
+        public IActionResult Put(int id)
         {
             return Ok();
         }
@@ -38,7 +63,7 @@ namespace AwesomeGym.API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            return Ok();
+            return Delete(id);
         }
     }
 }
