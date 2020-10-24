@@ -1,6 +1,7 @@
 ﻿using AwesomeGym.API.Entidades;
 using AwesomeGym.API.Persistence;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace AwesomeGym.API.Controllers
         {
             var unidade = _awesomeGymDbContext.Unidades.FirstOrDefault(u => u.Id == id);
 
-            if(unidade == null)
+            if (unidade == null)
             {
                 return NotFound();
             }
@@ -40,22 +41,42 @@ namespace AwesomeGym.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody]Unidade unidade)
+        public IActionResult Post([FromBody] Unidade unidade)
         {
             _awesomeGymDbContext.Unidades.Add(unidade);
+
             _awesomeGymDbContext.SaveChanges();
             return Ok();
         }
-        
+
         [HttpPut("{id}")]
-        public IActionResult Put(int id)
+        public async Task<IActionResult> Put(int id, [FromBody] Unidade unidade)
         {
-            return Ok();
-        }
-        
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
-        {
+            //Modo síncrono
+            //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------            
+            //if (!_awesomeGymDbContext.Unidades.Any(u => u.Id == id))
+            //{
+            //    return NotFound();
+            //}
+            //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+            //Modo assíncrono
+            //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            if (!(await _awesomeGymDbContext.Unidades.AnyAsync(u => u.Id == id)))
+            {
+                return NotFound();
+            }
+            //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+            //Modo síncrono
+            //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            //_awesomeGymDbContext.Unidades.Update(unidade);
+            //_awesomeGymDbContext.SaveChanges();
+            //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+            //Modo assíncrono
+            _awesomeGymDbContext.Entry(unidade).State = EntityState.Modified;
+
             return Ok();
         }
     }
