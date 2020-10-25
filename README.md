@@ -36,7 +36,7 @@ dotnet tool install --global dotnet-ef
 dotnet ef database update
 ```
 
-No entanto, antes executar estes comandos, é preciso configurar a connection string no arquivo ```appsettings.json``` colocando as informações necessárias para conexão de um banco de dados, como nome do servidor (geralmente é localhost, pois se trata do ambiente de desenvolvimento), nome do usuário, senha, porta e o nome do banco a ser criado. Segue o exemplo abaixo:
+No entanto, antes executar estes comandos, é preciso configurar a connection string no arquivo ```appsettings.json``` colocando as informações necessárias para conexão de um banco de dados, como nome do servidor (geralmente é ```localhost```, pois se trata do ambiente de desenvolvimento), nome do usuário, senha, porta e o nome do banco a ser criado. Segue o exemplo abaixo:
 
 ![Screenshot_3](https://user-images.githubusercontent.com/35710766/97115092-6991b780-16d3-11eb-807c-0644173bf935.png)
 <p align="center"><i>Conexões de banco de dados MySQL e SQL Server</i></p>
