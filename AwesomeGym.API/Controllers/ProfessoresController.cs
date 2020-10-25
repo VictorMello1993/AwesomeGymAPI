@@ -1,7 +1,12 @@
 ﻿using AwesomeGym.API.Entidades;
+using AwesomeGym.API.Enums;
+using AwesomeGym.API.InputModels;
 using AwesomeGym.API.Persistence;
+using AwesomeGym.API.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AwesomeGym.API.Controllers
 {
@@ -17,17 +22,18 @@ namespace AwesomeGym.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            var professores = _awesomeGymDbContext.Professores.ToList();
+            var professores = await _awesomeGymDbContext.Professores.ToListAsync();
+            var professoresViewModel = professores.Select(p => new ProfessorViewModel(p.Nome, p.Status)).ToList();
 
-            return Ok(professores);
+            return Ok(professoresViewModel);
         }
         
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var professor = _awesomeGymDbContext.Professores.FirstOrDefault(p => p.Id == id);
+            var professor = await _awesomeGymDbContext.Professores.FirstOrDefaultAsync(p => p.Id == id);
 
             if(professor == null)
             {
@@ -38,27 +44,51 @@ namespace AwesomeGym.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody]Professor professor)
+        public async Task <IActionResult> Post([FromBody]ProfessorInputModel professorInputModel)
         {
-            //var unidade = new Unidade("unidade1", "und_endereco1");
-            //professor.IdUnidade = unidade.Id;
-            //_awesomeGymDbContext.Unidades.Add(unidade);
-            //_awesomeGymDbContext.SaveChanges();
+            var professor = new Professor(professorInputModel.Nome, 
+                                          professorInputModel.Endereco, 
+                                          professorInputModel.IdUnidade);
 
-            _awesomeGymDbContext.Professores.Add(professor);
-            _awesomeGymDbContext.SaveChanges();
-            return Ok();
+            _awesomeGymDbContext.Entry(professor).State = EntityState.Added;
+            await _awesomeGymDbContext.SaveChangesAsync();
+            
+            //return Ok();
+            return CreatedAtAction(nameof(GetById), professor, new { id = professor.Id });
         }
 
         [HttpPut("{id}")] 
-        public IActionResult Put(int id)
+        public async Task<IActionResult> Put(int id, [FromBody] ProfessorUpdateInputModel professorUpdateInputModel)
         {
+            var professor = await _awesomeGymDbContext.Professores.FirstOrDefaultAsync(p => p.Id == id);
+
+            if(professor == null)
+            {
+                return NotFound();
+            }
+
+            professor.SetNome(professorUpdateInputModel.Nome);
+            professor.SetEndereco(professorUpdateInputModel.Endereco);
+
+            _awesomeGymDbContext.Entry(professor).State = EntityState.Modified;
+            await _awesomeGymDbContext.SaveChangesAsync();
+
             return Ok();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            var professor = await _awesomeGymDbContext.Professores.FirstOrDefaultAsync(p => p.Id == id);
+
+            if(professor == null)
+            {
+                return NotFound();
+            }
+
+            professor.mudarStatus(StatusProfessorEnum.Inativo);
+            await _awesomeGymDbContext.SaveChangesAsync();
+
             return Ok();
         }
     }

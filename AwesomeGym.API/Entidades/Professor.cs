@@ -18,15 +18,44 @@ namespace AwesomeGym.API.Entidades
             IdUnidade = idUnidade;
         }
 
-        public int Id { get; set; }
-        public string Nome { get; set; }
-        public string Endereco { get; set; }
-        public StatusProfessorEnum Status { get; set; }
+        public int Id { get; private set; }
+        public string Nome { get; private set; }
+        public string Endereco { get; private set; }
+        public StatusProfessorEnum Status { get; private set; }
 
-        public List<Aluno> Alunos { get; set; }
+        public List<Aluno> Alunos { get; private set; }
 
-        public int IdUnidade { get; set; }
-        public Unidade Unidade { get; set; }
+        public int IdUnidade { get; private set; }
+        public Unidade Unidade { get; private set; }
 
+
+        public void mudarStatus(StatusProfessorEnum status)
+        {            
+            switch (status)
+            {
+                case StatusProfessorEnum.Ferias:
+                    Status = StatusProfessorEnum.Ferias;
+                    break;
+                case StatusProfessorEnum.Inativo:
+                    Status = StatusProfessorEnum.Inativo;
+                    break;
+                case StatusProfessorEnum.VinculoTerminado:
+                    Status = StatusProfessorEnum.VinculoTerminado;
+                    break;
+                default:
+                    Status = StatusProfessorEnum.Ativo;
+                    break;
+            }
+        }
+
+        public void SetEndereco(string endereco)
+        {
+            Endereco = endereco;
+        }
+
+        public void SetNome(string nome)
+        {
+            Nome = nome;
+        }
     }
 }

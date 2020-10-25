@@ -1,6 +1,7 @@
 ﻿using AwesomeGym.API.Entidades;
 using AwesomeGym.API.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace AwesomeGym.API.Persistence
 {
@@ -24,7 +25,13 @@ namespace AwesomeGym.API.Persistence
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseInMemoryDatabase("AwesomeGymDb");
+            //optionsBuilder.UseInMemoryDatabase("AwesomeGymDb");
+
+            optionsBuilder
+                .UseMySql("server=127.0.0.1;port=3306;user=root;password=xxxxxxxx;database=awesomegym")
+                .UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole().AddFilter(level => level >= LogLevel.Information)))
+                .EnableSensitiveDataLogging()
+                .EnableDetailedErrors();
         }
     }
 }

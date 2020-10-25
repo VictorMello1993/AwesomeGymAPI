@@ -1,9 +1,12 @@
 ﻿using AwesomeGym.API.Entidades;
+using AwesomeGym.API.Enums;
 using AwesomeGym.API.InputModels;
 using AwesomeGym.API.Persistence;
 using AwesomeGym.API.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AwesomeGym.API.Controllers
 {
@@ -19,18 +22,18 @@ namespace AwesomeGym.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            var alunos = _awesomeGymDbContext.Alunos.ToList();
+            var alunos = await _awesomeGymDbContext.Alunos.ToListAsync();
             var alunosViewModel = alunos.Select(a => new AlunoViewModel(a.Nome, a.Status)).ToList();
 
             return Ok(alunosViewModel);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var aluno = _awesomeGymDbContext.Alunos.FirstOrDefault(u => u.Id == id);
+            var aluno = await _awesomeGymDbContext.Alunos.FirstOrDefaultAsync(u => u.Id == id);
 
             if (aluno == null)
             {
@@ -41,14 +44,16 @@ namespace AwesomeGym.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] AlunoInputModel alunoInputModel)
+        public async Task<IActionResult> Post([FromBody] AlunoInputModel alunoInputModel)
         {
             var aluno = new Aluno(alunoInputModel.Nome,
                                   alunoInputModel.Endereco, 
-                                  alunoInputModel.DataNascimento);
+                                  alunoInputModel.DataNascimento,
+                                  alunoInputModel.IdUnidade,
+                                  alunoInputModel.IdProfessor);
 
-            _awesomeGymDbContext.Alunos.Add(aluno);
-            _awesomeGymDbContext.SaveChanges();
+            _awesomeGymDbContext.Entry(aluno).State = EntityState.Added;
+            await _awesomeGymDbContext.SaveChangesAsync();
 
             //return Ok();
 
@@ -57,27 +62,31 @@ namespace AwesomeGym.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] AlunoUpdateInputModel alunoUpdateInputModel)
+        public async Task<IActionResult> Put(int id, [FromBody] AlunoUpdateInputModel alunoUpdateInputModel)
         {
-            var aluno = _awesomeGymDbContext.Alunos.FirstOrDefault(a => a.Id == id);
+            var aluno = await _awesomeGymDbContext.Alunos.FirstOrDefaultAsync(a => a.Id == id);
 
             if (aluno == null)
             {
                 return NotFound();
             }
 
-            aluno.Endereco = alunoUpdateInputModel.Endereco;
+            aluno.SetNome(alunoUpdateInputModel.Nome);
+            aluno.SetEndereco(alunoUpdateInputModel.Endereco);
+            aluno.SetDataNascimento(alunoUpdateInputModel.DataNascimento);
 
+            _awesomeGymDbContext.Entry(aluno).State = EntityState.Modified;
             //_awesomeGymDbContext.Update(aluno);
+
             _awesomeGymDbContext.SaveChanges();
 
             return Ok();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var aluno = _awesomeGymDbContext.Alunos.FirstOrDefault(a => a.Id == id);
+            var aluno = await _awesomeGymDbContext.Alunos.FirstOrDefaultAsync(a => a.Id == id);
 
             if (aluno == null)
             {
@@ -86,8 +95,8 @@ namespace AwesomeGym.API.Controllers
 
             //_awesomeGymDbContext.Alunos.Remove(aluno);
 
-            aluno.MudarStatusParaInativo();
-            _awesomeGymDbContext.SaveChanges();
+            aluno.MudarStatus(StatusAlunoEnum.Inativo);
+            await _awesomeGymDbContext.SaveChangesAsync();
 
             return Ok();
         }

@@ -9,17 +9,19 @@ namespace AwesomeGym.API.Entidades
     public class Aluno
     {
         protected Aluno() { }
-        public Aluno(string nome, string endereco, DateTime dataNascimento)
+        public Aluno(string nome, string endereco, DateTime dataNascimento, int idUnidade, int idProfessor)
         {
             Nome = nome;
             Endereco = endereco;
             DataNascimento = dataNascimento;
             Status = StatusAlunoEnum.Ativo;
-        }
+            IdProfessor = idProfessor;
+            IdUnidade = idUnidade;
+        }        
 
         public int Id { get; private set; }
         public string Nome { get; private set; }
-        public string Endereco { get; set; }
+        public string Endereco { get; private set; }
         public DateTime DataNascimento { get; private set; }
         public StatusAlunoEnum Status { get; private set; }
 
@@ -29,15 +31,33 @@ namespace AwesomeGym.API.Entidades
         public int IdProfessor { get; private set; }
         public Professor Professor { get; private set; }
 
-        public void MudarStatusParaInativo()
+        public void MudarStatus(StatusAlunoEnum status)
         {
-            if(Status != StatusAlunoEnum.Ativo)
+            switch (status)
             {
-                throw new Exception("Estado inválido");
+                case StatusAlunoEnum.Inativo:
+                    Status = StatusAlunoEnum.Inativo;
+                    break;
+                default:
+                    Status = StatusAlunoEnum.Ativo;
+                    break;
+                    
             }
-            
-            Status = StatusAlunoEnum.Inativo;
         }
 
+        public void SetEndereco(string endereco)
+        {
+            Endereco = endereco;
+        }
+
+        public void SetNome(string nome)
+        {
+            Nome = nome;
+        }
+
+        public void SetDataNascimento(DateTime dataNascimento)
+        {
+            DataNascimento = dataNascimento;
+        }
     }
 }

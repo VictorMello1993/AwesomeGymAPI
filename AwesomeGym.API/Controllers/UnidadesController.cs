@@ -1,5 +1,7 @@
 ﻿using AwesomeGym.API.Entidades;
+using AwesomeGym.API.InputModels;
 using AwesomeGym.API.Persistence;
+using AwesomeGym.API.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -21,16 +23,18 @@ namespace AwesomeGym.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            var unidades = _awesomeGymDbContext.Unidades.ToList();
+            var unidades = await _awesomeGymDbContext.Unidades.ToListAsync();
+            var unidadesViewModel = unidades.Select(u => new UnidadeViewModel(u.Nome)).ToList();
+
             return Ok(unidades);
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var unidade = _awesomeGymDbContext.Unidades.FirstOrDefault(u => u.Id == id);
+            var unidade = await _awesomeGymDbContext.Unidades.FirstOrDefaultAsync(u => u.Id == id);
 
             if (unidade == null)
             {
@@ -41,17 +45,24 @@ namespace AwesomeGym.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] Unidade unidade)
+        public async Task<IActionResult> Post([FromBody] UnidadeInputModel unidadeInputModel)
         {
-            _awesomeGymDbContext.Unidades.Add(unidade);
+            var unidade = new Unidade(unidadeInputModel.Nome, unidadeInputModel.Endereco);
 
-            _awesomeGymDbContext.SaveChanges();
-            return Ok();
+            //_awesomeGymDbContext.Unidades.Add(unidade);
+
+            _awesomeGymDbContext.Entry(unidade).State = EntityState.Added;
+            await _awesomeGymDbContext.SaveChangesAsync();
+
+            //return Ok();
+            
+            return CreatedAtAction(nameof(GetById), unidade, new { id = unidade.Id});
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Unidade unidade)
+        public async Task<IActionResult> Put(int id, [FromBody] UnidadeUpdateInputModel unidadeUpdateInputModel)
         {
+            var unidade = await _awesomeGymDbContext.Unidades.FirstOrDefaultAsync(u => u.Id == id);
             //Modo síncrono
             //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------            
             //if (!_awesomeGymDbContext.Unidades.Any(u => u.Id == id))
@@ -62,10 +73,14 @@ namespace AwesomeGym.API.Controllers
 
             //Modo assíncrono
             //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-            if (!(await _awesomeGymDbContext.Unidades.AnyAsync(u => u.Id == id)))
+            if (unidade == null)
             {
                 return NotFound();
             }
+
+            unidade.SetNome(unidadeUpdateInputModel.Nome);
+            unidade.SetEndereco(unidadeUpdateInputModel.Endereco);
+
             //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
             //Modo síncrono
@@ -76,6 +91,7 @@ namespace AwesomeGym.API.Controllers
 
             //Modo assíncrono
             _awesomeGymDbContext.Entry(unidade).State = EntityState.Modified;
+            await _awesomeGymDbContext.SaveChangesAsync();
 
             return Ok();
         }

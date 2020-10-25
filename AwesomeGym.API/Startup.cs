@@ -24,13 +24,16 @@ namespace AwesomeGym.API
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "AwesomeGym API", Version = "v1" }));
 
             //Conexão com banco de dados
-            var connectionString = Configuration.GetConnectionString("AwesomeGymCn");
+            //var connectionString = Configuration.GetConnectionString("AwesomeGymCn");
 
             //SQL Server
             //services.AddDbContext<AwesomeGymDbContext>(options => options.UseSqlServer(connectionString));
 
             //Banco de dados em memória
-            services.AddDbContext<AwesomeGymDbContext>(options => options.UseInMemoryDatabase("AwesomeGymDb"));
+            //services.AddDbContext<AwesomeGymDbContext>(options => options.UseInMemoryDatabase("AwesomeGymDb"));
+			
+			//MySQL
+            services.AddDbContext<AwesomeGymDbContext>(options => options.UseMySql("server=127.0.0.1;port=3306;user=root;password=xxxxxxx;database=awesomegym"));
 
             services.AddControllers();
         }
