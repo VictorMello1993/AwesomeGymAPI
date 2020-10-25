@@ -24,7 +24,7 @@ git clone https://github.com/VictorMello1993/AwesomeGymAPI.git
 
 2- Abra o Visual Studio. As dependências já estão instaladas no projeto, sem a necessidade de ter que instalar tudo novamente. Isso pode ser visto através do arquivo ```AwesomeGym.API.csproj```
 
-3- Normalmente o projeto pode apresentar problemas de compilação. Para isso, execute Clean Solution e recompile que o erro não será mais reproduzido.
+3- Normalmente o projeto pode apresentar problemas de compilação devido às dlls geradas da compilação realizada anteriormente em outra máquina. Para isso, execute Clean Solution e recompile que o erro não será mais reproduzido.
 
 4- Como já temos uma migration disponível no projeto a ser inicializado para um tipo de banco de dados (vide pasta Persistence/Migrations), é preciso executar os seguintes comandos via cmd ou Power Sheel:
 
