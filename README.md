@@ -26,7 +26,7 @@ git clone https://github.com/VictorMello1993/AwesomeGymAPI.git
 
 3- Normalmente o projeto pode apresentar problemas de compilação. Para isso, execute Clean Solution e recompile que o erro não será mais reproduzido.
 
-4- Como já temos uma migration disponível no projeto a ser inicializado para um tipo de banco de dados (vide pasta Persistence/Migrations), é preciso executar os seguintes comandos:
+4- Como já temos uma migration disponível no projeto a ser inicializado para um tipo de banco de dados (vide pasta Persistence/Migrations), é preciso executar os seguintes comandos via cmd ou Power Sheel:
 
 ```
 dotnet tool install --global dotnet-ef 
@@ -35,6 +35,7 @@ dotnet tool install --global dotnet-ef
 ```
 dotnet ef database update
 ```
+OBS: Lembrando que na linha de comando, é preciso navegar até a pasta raíz da aplicação (no caso, é a pasta ```AwesomeGym.API```)
 
 No entanto, antes executar estes comandos, é preciso configurar a connection string no arquivo ```appsettings.json``` colocando as informações necessárias para conexão de um banco de dados, como nome do servidor (geralmente é ```localhost```, pois se trata do ambiente de desenvolvimento), nome do usuário, senha, porta e o nome do banco a ser criado. Segue o exemplo abaixo:
 
