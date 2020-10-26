@@ -61,3 +61,7 @@ Após esses procedimentos, o Entity Framework irá automaticamente criar a base 
 
 5- Pronto, agora é só executar o projeto e acessar através do endereço
 ```https://localhost:5001/swagger/index.html```
+
+---
+<h2>Versões do README</h2>
+<a href="/README-ENUS.md">Inglês</a> | <a href="/README.md">Português</a> 
