@@ -58,3 +58,6 @@ After following the steps above, Entity Framework will create a database and map
 <p align="center"><i>Teacher entity class mapping </i></p>
 
 5- It's done, now just run the project and access through the address ```https://localhost:5001/swagger/index.html```
+
+<h2>README Versions</h2>
+<a href="/README-ENUS.md">English</a> | <a href="/README.md">Portuguese</a>
